@@ -139,17 +139,40 @@ exports.getAllProducts = (req, res) => {
   let sortBy = req.query.sortBy ? req.query.sortBy : "_id";
 
   Product.find()
-    .select("-photo")
     .populate("category")
     .sort([[sortBy, "asc"]])
     .limit(limit)
     .exec((err, products) => {
       if (err) {
         return res.status(400).json({
-          error: "NO product FOUND"
+          error: "Error occured while retrieving the products"
         });
       }
-      res.json(products);
+      if (!products || products.length === 0) {
+        return res.status(404).json({
+          error: "No products found"
+        });
+      }
+      // res.json(products);
+      const productsWithPhoto = products.map(product => {
+        return {
+          _id: product._id,
+          name: product.name,
+          description: product.description,
+          price: product.price,
+          category: product.category,
+          stock: product.stock,
+          sold: product.sold,
+          photo: {
+            data: product.photo.data,
+            contentType: product.photo.contentType
+          },
+          createdAt: product.createdAt,
+          updatedAt: product.updatedAt,
+          __v: product.__v
+        };
+      });
+      res.json(productsWithPhoto);
     });
 };
 

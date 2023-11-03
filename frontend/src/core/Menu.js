@@ -22,9 +22,9 @@ const Menu = ({ history }) => (
         <Link
           style={currentTab(history, "/cart")}
           className="nav-link"
-          to="/cart"
+          to="/donate"
         >
-          Cart
+          Donate
         </Link>
       </li>
       {isAutheticated() && isAutheticated().user.role === 0 && (
